@@ -1,25 +1,27 @@
-const express = require('express');
-const routes = require('./routes/index');
-const errorHandler = require('./middlewares/errorHandler');
-const logger = require('./middlewares/logger');
-const infoRoutes = require('./routes/infoRoutes');
-const taskRoutes = require('./routes/taskRoutes');
+const express = require("express");
 
+const homeRoutes = require("./routes/index");
+const infoRoutes = require("./routes/infoRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const authRoutes = require("./routes/authRoutes");
 
+const errorHandler = require("./middlewares/errorHandler");
+const notFound = require("./middlewares/notFound");
+const logger = require("./middlewares/logger");
 
 const app = express();
 
 app.use(express.json());
-
-// Logger primero
 app.use(logger);
 
-// Rutas
-app.use('/', routes);
-app.use('/api/v1/info', infoRoutes);
-app.use('/api/v1/tasks', taskRoutes);
+// Rutas API
+app.use("/", homeRoutes);
+app.use("/api/v1/info", infoRoutes);
+app.use("/api/v1/tasks", taskRoutes);
+app.use("/api/v1/auth", authRoutes);
 
-
+// Middleware 404
+app.use(notFound);
 
 // Manejo de errores
 app.use(errorHandler);

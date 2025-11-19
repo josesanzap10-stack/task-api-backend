@@ -1,34 +1,49 @@
-let tasks = []; // base temporal
+const pool = require("../config/db");
 
-exports.getAllTasks = () => {
-  return tasks;
+exports.getAll = async (userId) => {
+  const result = await pool.query(
+    "SELECT * FROM tasks WHERE user_id = $1 ORDER BY id ASC",
+    [userId]
+  );
+  return result.rows;
 };
 
-exports.createTask = (data) => {
-  const newTask = {
-    id: tasks.length + 1,
-    title: data.title,
-    completed: false,
-  };
-  tasks.push(newTask);
-  return newTask;
+exports.create = async (title, userId) => {
+  const result = await pool.query(
+    "INSERT INTO tasks (title, user_id) VALUES ($1, $2) RETURNING *",
+    [title, userId]
+  );
+  return result.rows[0];
 };
 
-exports.updateTask = (id, data) => {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return null;
+exports.update = async (taskId, userId, updates) => {
+  const { completed, title } = updates;
 
-  task.title = data.title !== undefined ? data.title : task.title;
-  task.completed =
-    data.completed !== undefined ? data.completed : task.completed;
+  const result = await pool.query(
+    `UPDATE tasks 
+     SET title = COALESCE($1, title), 
+         completed = COALESCE($2, completed) 
+     WHERE id = $3 AND user_id = $4 
+     RETURNING *`,
+    [title, completed, taskId, userId]
+  );
 
-  return task;
+  if (!result.rows.length) {
+    throw new Error("Task not found or not authorized");
+  }
+
+  return result.rows[0];
 };
 
-exports.deleteTask = (id) => {
-  const index = tasks.findIndex(t => t.id === id);
-  if (index === -1) return false;
+exports.remove = async (taskId, userId) => {
+  const result = await pool.query(
+    "DELETE FROM tasks WHERE id = $1 AND user_id = $2 RETURNING id",
+    [taskId, userId]
+  );
 
-  tasks.splice(index, 1);
+  if (!result.rows.length) {
+    throw new Error("Task not found or not authorized");
+  }
+
   return true;
 };

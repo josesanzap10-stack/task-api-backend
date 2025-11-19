@@ -1,33 +1,51 @@
-const taskService = require('../services/taskService');
+const taskService = require("../services/taskService");
 
-exports.getTasks = (req, res) => {
-  const tasks = taskService.getAllTasks();
-  res.json({ success: true, tasks });
-};
-
-exports.createTask = (req, res) => {
-  const newTask = taskService.createTask(req.body);
-  res.status(201).json({ success: true, task: newTask });
-};
-
-exports.updateTask = (req, res) => {
-  const id = parseInt(req.params.id);
-  const updated = taskService.updateTask(id, req.body);
-
-  if (!updated) {
-    return res.status(404).json({ success: false, message: "Task not found" });
+exports.getAll = async (req, res, next) => {
+  try {
+    const userId = req.user.userId; // viene del JWT
+    const tasks = await taskService.getAll(userId);
+    res.json({ success: true, tasks });
+  } catch (err) {
+    next(err);
   }
-
-  res.json({ success: true, task: updated });
 };
 
-exports.deleteTask = (req, res) => {
-  const id = parseInt(req.params.id);
-  const deleted = taskService.deleteTask(id);
+exports.create = async (req, res, next) => {
+  try {
+    const { title } = req.body;
+    const userId = req.user.userId;
 
-  if (!deleted) {
-    return res.status(404).json({ success: false, message: "Task not found" });
+    const task = await taskService.create(title, userId);
+
+    res.status(201).json({ success: true, task });
+  } catch (err) {
+    next(err);
   }
+};
 
-  res.json({ success: true });
+exports.update = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const taskId = req.params.id;
+    const updates = req.body;
+
+    const task = await taskService.update(taskId, userId, updates);
+
+    res.json({ success: true, task });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.remove = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const taskId = req.params.id;
+
+    await taskService.remove(taskId, userId);
+
+    res.json({ success: true, message: "Task deleted" });
+  } catch (err) {
+    next(err);
+  }
 };

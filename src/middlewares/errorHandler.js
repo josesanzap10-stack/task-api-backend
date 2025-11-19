@@ -1,11 +1,12 @@
-function errorHandler(err, req, res, next) {
+module.exports = (err, req, res, next) => {
   console.error("🔥 Error capturado:", err);
 
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-    stack: process.env.NODE_ENV === "production" ? null : err.stack
-  });
-}
+  const status = err.status || 500;
+  const message = err.message || "Internal Server Error";
 
-module.exports = errorHandler;
+  res.status(status).json({
+    success: false,
+    message,
+    ...(process.env.NODE_ENV !== "production" && { stack: err.stack })
+  });
+};

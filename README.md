@@ -1,41 +1,58 @@
-# Task API Backend
+# DevHub Task API — Backend (Node.js + Express + PostgreSQL + JWT)
 
-A clean, fully modular REST API built with **Node.js + Express**, featuring a complete **Task CRUD** with services, controllers, middleware, and versioned routes.
+Backend REST completo y modular para gestionar tareas con usuarios autenticados.  
+Incluye CRUD de tareas, autenticación con JWT, conexión a PostgreSQL y arquitectura preparada para producción.
 
-This project is part of my full-stack learning roadmap.  
-The goal is to build production-ready APIs and then integrate them with a frontend.
+Este backend forma parte del proyecto **DevHub** y será consumido por un frontend en React.
 
 ---
 
 ## 🚀 Tech Stack
 
-- Node.js
-- Express
-- Nodemon
-- MVC Modular Architecture
-- Custom Middlewares
+- **Runtime:** Node.js
+- **Framework:** Express
+- **Base de datos:** PostgreSQL
+- **Auth:** JSON Web Tokens (JWT)
+- **Password hashing:** bcrypt
+- **Validación:** Joi
+- **Dev tools:** Nodemon
+- **Arquitectura:** Controllers + Services + Routes + Middlewares
 
 ---
 
-## 📌 API Endpoints (v1)
+## 📂 Estructura del proyecto
 
-### Get all tasks
-
-### Create a new task
-
-### Update a task
-
-### Delete a task
-
----
-
-## 📂 Project Structure
-
-
----
-
-## 🧪 Testing
-
-You can test the API using:
-
-### cURL
+```txt
+backend/
+│── server.js
+│── package.json
+│── package-lock.json
+│── README.md
+│
+└── src/
+    ├── app.js
+    ├── config/
+    │   ├── appInfo.js
+    │   └── db.js
+    ├── controllers/
+    │   ├── homeController.js
+    │   ├── infoController.js
+    │   ├── taskController.js
+    │   └── authController.js
+    ├── routes/
+    │   ├── index.js
+    │   ├── infoRoutes.js
+    │   ├── taskRoutes.js
+    │   └── authRoutes.js
+    ├── services/
+    │   ├── taskService.js
+    │   └── authService.js
+    ├── middlewares/
+    │   ├── authMiddleware.js
+    │   ├── errorHandler.js
+    │   ├── logger.js
+    │   └── notFound.js
+    ├── schemas/
+    │   └── taskSchema.js
+    └── utils/
+        └── CustomError.js
